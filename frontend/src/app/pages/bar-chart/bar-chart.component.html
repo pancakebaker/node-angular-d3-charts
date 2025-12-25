@@ -1,0 +1,11 @@
+<h2>{{ title }}</h2>
+
+<div #chart class="chart-wrap"></div>
+
+<div class="chart-legend" #legend></div>
+
+@if (dateRangeText) {
+  <p class="chart-desc">
+    {{ dateRangeText }}
+  </p>
+}

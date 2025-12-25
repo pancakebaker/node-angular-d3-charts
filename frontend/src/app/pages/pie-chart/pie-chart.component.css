@@ -1,0 +1,11 @@
+:host svg {
+  width: 100%;
+  height: auto;
+}
+
+.chart-wrap {
+  min-height: 320px;
+}
+
+.chart-legend { margin-top: 6px; margin-bottom: 2px; }
+.chart-desc { margin-top: 0; font-size: 12px; opacity: 0.75; }
