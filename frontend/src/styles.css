@@ -1,7 +1,7 @@
 .container {
-  max-width: 980px;
-  margin: 20px auto;
-  padding: 0 12px;
+  max-width: 1080px;
+  margin: 28px auto;
+  padding: 0 16px;
   font-family: system-ui, Arial, sans-serif;
 }
 .card {
@@ -20,14 +20,30 @@ a {
 }
 .nav {
   display: flex;
+  align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 14px 16px;
   border-bottom: 1px solid #e5e7eb;
+  font-family: system-ui, Arial, sans-serif;
 }
 .nav a {
   padding: 8px 10px;
   border-radius: 8px;
+  color: #334155;
+  font-weight: 600;
 }
 .nav a.active {
   background: #f3f4f6;
+}
+.nav .brand {
+  margin-right: auto;
+  padding-left: 0;
+  color: #111827;
+  font-weight: 800;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #111827;
 }

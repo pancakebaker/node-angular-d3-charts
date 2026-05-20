@@ -29,26 +29,37 @@ describe('ApiService', () => {
   });
 
   it('getBarChart() should GET /api/barchart', () => {
-    const mockResponse = { title: 'Bar', data: [{ label: 'A', value: 1 }] };
+    const mockResponse = {
+      title: 'Bar',
+      data: [{ date: '2026-05-20', openMeteo: 21.5, bom: 22.1 }],
+    };
 
-    service.getBarChart().subscribe(res => {
+    service.getBarChart({ lat: -33.8688, lon: 151.2093, bomSearch: 'Sydney', days: 7 }).subscribe(res => {
       expect(res).toEqual(mockResponse);
     });
 
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/barchart`);
+    const req = httpMock.expectOne((request) => request.url === `${environment.apiBaseUrl}/api/barchart`);
     expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('bomSearch')).toBe('Sydney');
+    expect(req.request.params.get('days')).toBe('7');
     req.flush(mockResponse);
   });
 
   it('getPieChart() should GET /api/piechart', () => {
-    const mockResponse = { title: 'Pie', data: [{ label: 'B', value: 2 }] };
+    const mockResponse = {
+      title: 'Pie',
+      data: [{ date: '2026-05-20', openMeteo: 21.5, bom: 22.1 }],
+      meta: { unit: '°C', sources: ['open-meteo', 'bom'] },
+    };
 
-    service.getPieChart().subscribe(res => {
+    service.getPieChart({ lat: -33.8688, lon: 151.2093, bomSearch: 'Sydney', days: 7 }).subscribe(res => {
       expect(res).toEqual(mockResponse);
     });
 
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/piechart`);
+    const req = httpMock.expectOne((request) => request.url === `${environment.apiBaseUrl}/api/piechart`);
     expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('lat')).toBe('-33.8688');
+    expect(req.request.params.get('lon')).toBe('151.2093');
     req.flush(mockResponse);
   });
 });

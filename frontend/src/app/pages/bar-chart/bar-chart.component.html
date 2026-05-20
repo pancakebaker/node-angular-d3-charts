@@ -1,11 +1,42 @@
-<h2>{{ title }}</h2>
+<section class="chart-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Weather comparison</p>
+      <h1>{{ title }}</h1>
+      @if (dateRangeText) {
+        <p class="chart-desc">{{ dateRangeText }}</p>
+      }
+    </div>
 
-<div #chart class="chart-wrap"></div>
+    <div class="control-panel" aria-label="Chart controls">
+      <label>
+        <span>Location</span>
+        <select [value]="selectedLocation.id" (change)="setLocation($any($event.target).value)">
+          @for (location of demoLocations; track location.id) {
+            <option [value]="location.id">{{ location.label }}</option>
+          }
+        </select>
+      </label>
 
-<div class="chart-legend" #legend></div>
+      <label>
+        <span>Days</span>
+        <input type="number" min="1" max="16" [value]="days" (change)="setDays($any($event.target).value)" />
+      </label>
 
-@if (dateRangeText) {
-  <p class="chart-desc">
-    {{ dateRangeText }}
-  </p>
-}
+      <button type="button" (click)="refresh()" [disabled]="isLoading">
+        {{ isLoading ? 'Loading' : 'Refresh' }}
+      </button>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <div class="chart-state">Loading weather data...</div>
+  } @else if (errorMessage) {
+    <div class="chart-state error" role="alert">{{ errorMessage }}</div>
+  } @else if (rows.length === 0) {
+    <div class="chart-state">No chart data is available for this selection.</div>
+  }
+
+  <div #chart class="chart-wrap" [class.is-hidden]="isLoading || errorMessage || rows.length === 0"></div>
+  <div class="chart-legend" #legend></div>
+</section>

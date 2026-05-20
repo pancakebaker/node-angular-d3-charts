@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { BarChartComponent } from './bar-chart.component';
-import { ApiService, ChartResponse } from '../../services/api.service';
+import { ApiService, WeatherChartResponse } from '../../services/api.service';
 
 describe('BarChartComponent', () => {
   let component: BarChartComponent;
   let fixture: ComponentFixture<BarChartComponent>;
 
-  const mockResponse: ChartResponse = {
-    title: 'Bar Chart',
+  const mockResponse: WeatherChartResponse = {
+    title: 'Daily Max Temperature (°C) • Sydney',
     data: [
-      { label: 'Mon', value: 12 },
-      { label: 'Tue', value: 18 },
+      { date: '2026-05-20', openMeteo: 21.5, bom: 22.1 },
+      { date: '2026-05-21', openMeteo: 23.2, bom: 24 },
     ],
   };
 
@@ -32,51 +32,54 @@ describe('BarChartComponent', () => {
   });
 
   it('should create', () => {
-    const fixture = TestBed.createComponent(BarChartComponent);
-    const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
 
-  it('ngOnInit should request bar chart data (and not crash the test env)', () => {
-    // Block requestAnimationFrame so D3 render code doesn’t execute in unit test
+  it('ngOnInit should request bar chart data and expose weather rows', () => {
     const originalRaf = globalThis.requestAnimationFrame;
     globalThis.requestAnimationFrame = (() => 0) as any;
 
     try {
-      fixture.detectChanges(); // triggers ngOnInit
+      fixture.detectChanges();
       expect(mockApi.getBarChart as any).toHaveBeenCalledTimes(1);
-
-      // Optional: assert component state instead of render calls
-      // expect(component.rows?.length).toBeGreaterThan(0);
+      expect(component.rows.length).toBe(2);
+      expect(component.dateRangeText).toContain('Showing');
+      expect(component.isLoading).toBe(false);
     } finally {
       globalThis.requestAnimationFrame = originalRaf;
     }
   });
 
+  it('shows an error state when the chart API fails', () => {
+    (mockApi.getBarChart as any).mockReturnValueOnce(throwError(() => new Error('offline')));
+
+    fixture.detectChanges();
+
+    expect(component.errorMessage).toContain('Chart data is unavailable');
+    expect(component.isLoading).toBe(false);
+  });
 
   it('parseYyyyMmDd should return Date for valid yyyy-mm-dd and null for invalid', () => {
-    const fixture = TestBed.createComponent(BarChartComponent);
-    const component = fixture.componentInstance as any;
+    const c = component as any;
 
-    const d = component.parseYyyyMmDd('2025-12-25');
+    const d = c.parseYyyyMmDd('2026-05-20');
     expect(d).toBeInstanceOf(Date);
-    expect(d.getFullYear()).toBe(2025);
-    expect(d.getMonth()).toBe(11); // zero-based
-    expect(d.getDate()).toBe(25);
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(4);
+    expect(d.getDate()).toBe(20);
 
-    expect(component.parseYyyyMmDd('2025/12/25')).toBeNull();
-    expect(component.parseYyyyMmDd('not-a-date')).toBeNull();
+    expect(c.parseYyyyMmDd('2026/05/20')).toBeNull();
+    expect(c.parseYyyyMmDd('not-a-date')).toBeNull();
   });
 
   it('buildDateRangeTextFromRows should return a human-readable range', () => {
-    const fixture = TestBed.createComponent(BarChartComponent);
-    const component = fixture.componentInstance as any;
+    const c = component as any;
 
-    const text = component.buildDateRangeTextFromRows([
-      { date: '2025-12-24', bom: 24 },
-      { date: '2025-12-25', bom: 21, openMeteo: 21.8 },
+    const text = c.buildDateRangeTextFromRows([
+      { date: '2026-05-20', bom: 24 },
+      { date: '2026-05-21', bom: 21, openMeteo: 21.8 },
     ]);
 
-    expect(text).toContain('Showing:');
+    expect(text).toContain('Showing');
   });
 });
