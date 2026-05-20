@@ -1,5 +1,7 @@
 # Node Angular D3 Charts
 
+[![CI](https://github.com/pancakebaker/node-angular-d3-charts/actions/workflows/ci.yml/badge.svg)](https://github.com/pancakebaker/node-angular-d3-charts/actions/workflows/ci.yml)
+
 Full-stack weather visualization demo built with an Angular frontend, D3.js charts, and a Node.js/Express API that aggregates live weather data from Open-Meteo and the Australian Bureau of Meteorology.
 
 This repository is tuned for portfolio and interview demos: it shows data fetching, API validation, caching, typed Angular services, D3 rendering, loading/error states, and automated tests across both apps.
